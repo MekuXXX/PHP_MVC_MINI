@@ -3,18 +3,17 @@
 declare(strict_types=1);
 namespace App\Core;
 
-use App\Core\Request;
-use App\Core\Application;
-
 class Router
 {
-  public string $notFound = 'errors/404NotFound';
+  public static string $notFound = 'errors/404NotFound';
   protected array $routes = [];
   protected Request $request;
+  protected Controller $controller;
 
   public function __construct() 
   {  
     $this->request = new Request();
+    $this->controller = new Controller();
   }
 
   public function resolve() 
@@ -22,42 +21,33 @@ class Router
     $method = $this->request->getMethod();
     $path = $this->request->getPath();
     $callback = $this->routes[$method][$path] ?? $this->notFound;
-    
-    if (is_callable($callback)) 
-    {
-      return call_user_func($callback);
-    }
 
-    return $this->renderView(trim($callback));
-  }
-
-  protected function addPrefix(string $view) 
-  {
-    return str_contains($view, '.php') ? $view : "$view.php";
-  }
-
-  
-  protected function readTemplate(string $view): string
-  {
-    ob_start();
-    include_once Application::$ROOT_VIEW_DIR . $this->addPrefix($view);
-    return ob_get_clean();
-  }
-
-  protected function renderView(string $view) 
-  {
-    if ($this->notFound === $view)
+    if (self::$notFound === $callback)
     {
       Application::$app->response->setStatusCode(404);
     }
     
-    $layout = $this->readTemplate($this->addPrefix('layout')); 
-    $page = $this->readTemplate($this->addPrefix($view));
-    return str_replace("{{ content }}", $page, $layout);
+    if (is_string($callback)) 
+    {
+      return $this->controller->render(trim($callback));
+    }
+
+    if (is_array($callback))
+    {
+      $callback[0] = new $callback[0]();
+    }
+
+    return call_user_func($callback, $this->request);
   }
 
-  public function get(string $path, callable | string $callback) 
+  public function get(string $path, callable | string | array $callback) 
   {
     $this->routes['get'][$path] = $callback;
+  }
+
+
+  public function post(string $path, callable | array $callback) 
+  {
+    $this->routes['post'][$path] = $callback;
   }
 }
