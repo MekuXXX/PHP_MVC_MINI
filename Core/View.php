@@ -28,7 +28,7 @@ class View
 
   protected function checkDefaultLayout(string $path): string
   {
-    if (is_dir(Application::$ROOT_VIEW_DIR . $path))
+    if (is_dir(Application::$ROOT_VIEW_DIR . $path) && file_exists(Application::$ROOT_VIEW_DIR . $path . '/' . $this->addPrefix($this->DEFAULT_LAYOUT)))
     {
       return $path . '/' . $this->DEFAULT_LAYOUT;
     }
@@ -39,7 +39,7 @@ class View
     for ($i = $pathLen - 2; $i >= 0; --$i)
     {
       
-      $filePath = implode("/", array_slice($pathArray, 0, $i + 1)) . '/' . $this->addPrefix($this->DEFAULT_LAYOUT);
+      $filePath = implode("/", array_slice($pathArray, 0, $i + 1)) . '/' . $this->DEFAULT_LAYOUT;
       if (file_exists(Application::$ROOT_VIEW_DIR . $filePath))
       {
         return $filePath;
