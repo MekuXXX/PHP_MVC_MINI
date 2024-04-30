@@ -9,7 +9,7 @@ class AuthController extends Controller
 
   public function login()
   {
-    return $this->render('auth/login');
+    return $this->render(view: 'auth/login');
   }
 
   public function register(Request $request)

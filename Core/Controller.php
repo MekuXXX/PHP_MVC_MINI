@@ -11,8 +11,8 @@ class Controller
   {
     $this->view = new View();
   }
-  public function render(string $view, ?array $params = []): string
+  public function render(string $view,?array $params = [],?string $layout = null): string
   {
-    return $this->view->renderView($view, $params);
+    return $this->view->renderView(view: $view,layout: $layout,params: $params);
   }
 }

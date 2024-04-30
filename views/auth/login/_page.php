@@ -1,10 +1,5 @@
-<h1 class="text-2xl font-bold mb-6">Register</h1>
-<form action="/register" class="space-y-4">
-  <div>
-    <label>Username: </label>
-    <input type="text" name="username">
-  </div>
-
+<h1 class="text-2xl font-bold mb-6">Login</h1>
+<form action="/login" class="space-y-4">
   <div>
     <label>Email: </label>
     <input type="email" name="email">

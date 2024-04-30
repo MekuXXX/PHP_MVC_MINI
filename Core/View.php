@@ -5,6 +5,8 @@ namespace App\Core;
 
 class View
 {
+  private string $DEFAULT_LAYOUT = "_layout";
+  private string $DEFAULT_PAGE = "_page";
 
   protected function addPrefix(string $view) 
   {
@@ -24,10 +26,48 @@ class View
     return ob_get_clean();
   }
 
-  public function renderView(string $view, array $params = []): string
+  protected function checkDefaultLayout(string $path): string
   {
-    $layout = $this->readTemplate($this->addPrefix('layout')); 
-    $page = $this->readTemplate($this->addPrefix($view), $params);
-    return preg_replace('/\{\{\s*content\s*\}\}/', $page, $layout);
+    if (is_dir(Application::$ROOT_VIEW_DIR . $path))
+    {
+      return $path . '/' . $this->DEFAULT_LAYOUT;
+    }
+
+    $pathArray = explode("/", $path);
+    $pathLen = count($pathArray);
+    
+    for ($i = $pathLen - 2; $i >= 0; --$i)
+    {
+      
+      $filePath = implode("/", array_slice($pathArray, 0, $i + 1)) . '/' . $this->addPrefix($this->DEFAULT_LAYOUT);
+      if (file_exists(Application::$ROOT_VIEW_DIR . $filePath))
+      {
+        return $filePath;
+      }
+    }
+
+    return $this->DEFAULT_LAYOUT;
+  }
+
+  public function renderView(string $view,?array $params = [], ?string $layout = null): string
+  {
+    
+    if ($layout === null) 
+    {
+      $layout = $this->checkDefaultLayout($view);
+    }
+    else if (!file_exists(Application::$ROOT_VIEW_DIR . $this->addPrefix($layout)) && is_dir(Application::$ROOT_VIEW_DIR . $layout))
+    {
+      $view = $view . '/' . $this->DEFAULT_PAGE;
+    }
+    
+    if (!file_exists(Application::$ROOT_VIEW_DIR . $this->addPrefix($view)) && is_dir(Application::$ROOT_VIEW_DIR . $view))
+    {
+      $view = $view . '/' . $this->DEFAULT_PAGE;
+    }
+
+    $layoutTemplate = $this->readTemplate($layout); 
+    $pageTemplate = $this->readTemplate($view, $params);
+    return preg_replace('/\{\{\s*content\s*\}\}/', $pageTemplate, $layoutTemplate);
   }
 }

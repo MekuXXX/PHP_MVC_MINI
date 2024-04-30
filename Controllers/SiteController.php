@@ -14,7 +14,7 @@ class SiteController extends Controller
       'name' => "Mayushi"
     ];
 
-    return $this->render('home', $params);
+    return $this->render(view: 'home', params: $params);
   }
 
   public static function handleContact(Request $request)
