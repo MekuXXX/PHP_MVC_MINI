@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test</title>
+  <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background-color: black;
+        color: white;
+        display: grid;
+        place-content: center;
+      }
+
+      h1 > span {
+        color: rgba(255, 255, 255, 0.1);
+        position: relative;
+        animation: first 12s infinite;
+        animation-delay: calc(var(--i) * -4s);
+      }
+
+      h1 > span::after {
+        /* content: attr(data-text); */
+      }
+
+      @keyframes first {
+        0%{
+          display: inline-block;
+        }
+        
+        33.33%,100% {
+          display: none;
+        }
+      }
+  </style>
+</head>
+<body>
+  <h1>
+    I'm a 
+    <span style="--i:0;" data-text="Developer">Developer</span>
+    <span style="--i:1;" data-text="Engineer">Engineer</span>
+    <span style="--i:2;" data-text="Doctor">Doctor</span>
+  </h1>
+</body>
+</html>
